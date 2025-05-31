@@ -5,6 +5,15 @@ terraform {
       version = "4.31.0"
     }
   }
+
+  backend "azurerm" {
+    resource_group_name = "test_group"
+    storage_account_name = "cjayteststorageacct"
+    container_name = "terraform-state-bucket"
+    key = "azure-infra/terraform.tfstate"
+
+    
+  }
 }
 
 provider "azurerm" {
