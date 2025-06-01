@@ -1,13 +1,13 @@
 resource "azurerm_network_security_group" "user-management-nsg" {
   name                = "user-management-nsg"
-  location            = azurerm_resource_group.user-management.location
-  resource_group_name = azurerm_resource_group.user-management.name
+  location            = data.azurerm_resource_group.user-management.location
+  resource_group_name = data.azurerm_resource_group.user-management.name
 }
 
 resource "azurerm_virtual_network" "example" {
   name                = "user-management-vnet"
-  location            = azurerm_resource_group.user-management.location
-  resource_group_name = azurerm_resource_group.user-management.name
+  location            = data.azurerm_resource_group.user-management.location
+  resource_group_name = data.azurerm_resource_group.user-management.name
   address_space       = ["10.1.0.0/26"]
 
 
