@@ -24,4 +24,5 @@ provider "azurerm" {
 
     use_msi = true
     subscription_id = "26036c57-ce1e-40f4-aa1d-e550302a08e6"
+    skip_provider_registration = true
 }
