@@ -11,7 +11,7 @@ resource "azurerm_kubernetes_cluster" "user-management-aks" {
     node_count = 3
     max_count = 5
     min_count = 2
-    vm_size    = "Standard_D2_v2"
+    vm_size    = "Standard_D2ds_v5"
     vnet_subnet_id = azurerm_subnet.aks-subnet.id
   }
 
