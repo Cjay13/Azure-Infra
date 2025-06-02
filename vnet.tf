@@ -103,8 +103,8 @@ resource "azurerm_subnet_network_security_group_association" "aks-association" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "appgw-association" {
-  subnet_id = azurerm_subnet.appgw-subnet
-  network_security_group_id = azurerm_network_security_group.appgw-nsg
+  subnet_id = azurerm_subnet.appgw-subnet.id
+  network_security_group_id = azurerm_network_security_group.appgw-nsg.id
 }
 
 resource "azurerm_public_ip" "appgw-pip" {
