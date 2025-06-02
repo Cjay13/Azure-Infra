@@ -1,0 +1,44 @@
+resource "azurerm_kubernetes_cluster" "user-management-aks" {
+  name                = "user-management-aks"
+  location            = data.azurerm_resource_group.user-management.location
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  dns_prefix          = "usermgtaks"
+  private_cluster_enabled = true
+
+  default_node_pool {
+    name       = "default"
+    auto_scaling_enabled = true
+    node_count = 3
+    max_count = 5
+    min_count = 2
+    vm_size    = "Standard_D2_v2"
+    vnet_subnet_id = azurerm_subnet.aks-subnet.id
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  tags = {
+    project = "user-management"
+  }
+
+  network_profile {
+    network_plugin = "azure"
+    network_policy = "azure"
+  }
+
+  ingress_application_gateway {
+    gateway_id = azurerm_application_gateway.user-management-appgw.id
+  }
+}
+
+output "client_certificate" {
+  value     = azurerm_kubernetes_cluster.user-management-aks.kube_config[0].client_certificate
+  sensitive = true
+}
+
+output "kube_config" {
+  value = azurerm_kubernetes_cluster.user-management-aks.kube_config_raw
+  sensitive = true
+}

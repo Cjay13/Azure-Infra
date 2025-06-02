@@ -25,9 +25,17 @@ resource "azurerm_subnet" "db-subnet" {
   address_prefixes = [var.db_subnet_cidr_range]
 }
 
+resource "azurerm_subnet" "appgw-subnet" {
+  name = "appgw-subnet"
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  virtual_network_name = azurerm_virtual_network.user-management.name
+  address_prefixes = [var.appgw_subnet_cidr_range]  
+}
+
 locals {
   aks_subnet_cidr = azurerm_subnet.aks-subnet.address_prefixes[0]
   db_subnet_cidr = azurerm_subnet.db-subnet.address_prefixes[0]
+  appgw_subnet_cidr = azurerm_subnet.appgw-subnet.address_prefixes[0]
 }
 
 resource "azurerm_network_security_group" "db-nsg" {
@@ -66,6 +74,24 @@ resource "azurerm_network_security_group" "aks-nsg" {
   } 
 }
 
+resource "azurerm_network_security_group" "appgw-nsg" {
+  name                = "appgw-nsg"
+  location            = data.azurerm_resource_group.user-management.location
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  security_rule {
+    name = "appgw-access"
+    priority = 100
+    direction = "Inbound"
+    access = "Allow"
+    protocol = "Tcp"
+    source_port_range = "*"
+    source_address_prefix = "*"
+    destination_port_ranges = [80, 443]
+    destination_address_prefix = "*"
+
+  } 
+}
+
 resource "azurerm_subnet_network_security_group_association" "db-association" {
   subnet_id = azurerm_subnet.db-subnet.id
   network_security_group_id = azurerm_network_security_group.db-nsg.id
@@ -74,5 +100,73 @@ resource "azurerm_subnet_network_security_group_association" "db-association" {
 resource "azurerm_subnet_network_security_group_association" "aks-association" {
   subnet_id = azurerm_subnet.aks-subnet.id
   network_security_group_id = azurerm_network_security_group.aks-nsg.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "appgw-association" {
+  subnet_id = azurerm_subnet.appgw-subnet
+  network_security_group_id = azurerm_network_security_group.appgw-nsg
+}
+
+resource "azurerm_public_ip" "appgw-pip" {
+  name                = "appgw-pip"
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  location            = data.azurerm_resource_group.user-management.location
+  allocation_method   = "Static"
+}
+
+resource "azurerm_application_gateway" "user-management-appgw" {
+  name                = "user-management-appgw"
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  location            = data.azurerm_resource_group.user-management.location
+
+  sku {
+    name     = "Standard_v2"
+    tier     = "Standard_v2"
+    capacity = 2
+  }
+
+  gateway_ip_configuration {
+    name      = "appgw-ip-config"
+    subnet_id = azurerm_subnet.appgw-subnet.id
+  }
+
+  frontend_port {
+    name = "user-management-feport"
+    port = 80
+  }
+
+  frontend_ip_configuration {
+    name                 = "user-management-feip"
+    public_ip_address_id = azurerm_public_ip.appgw-pip.id
+  }
+
+  backend_address_pool {
+    name = "user-management-beap"
+  }
+
+  backend_http_settings {
+    name                  = "user-management-be-httpst"
+    cookie_based_affinity = "Disabled"
+    path                  = "/path1/"
+    port                  = 80
+    protocol              = "Http"
+    request_timeout       = 60
+  }
+
+  http_listener {
+    name                           = "user-management-httplistner"
+    frontend_ip_configuration_name = "user-management-feip"
+    frontend_port_name             = "user-management-feport"
+    protocol                       = "Http"
+  }
+
+  request_routing_rule {
+    name                       = "user-management-rqrt-rule"
+    priority                   = 9
+    rule_type                  = "Basic"
+    http_listener_name         = "user-management-httplistner"
+    backend_address_pool_name  = "user-management-beap"
+    backend_http_settings_name = "user-management-be-httpst"
+  }
 }
 
