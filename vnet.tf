@@ -79,17 +79,29 @@ resource "azurerm_network_security_group" "appgw-nsg" {
   location            = data.azurerm_resource_group.user-management.location
   resource_group_name = data.azurerm_resource_group.user-management.name
   security_rule {
-    name = "appgw-access"
+    name = "appgw-infra-access"
     priority = 100
     direction = "Inbound"
     access = "Allow"
     protocol = "Tcp"
     source_port_range = "*"
-    source_address_prefix = "*"
-    destination_port_ranges = [80, 443]
+    source_address_prefix = "Internet"
+    destination_port_ranges = ["65200-65535"]
     destination_address_prefix = "*"
 
   } 
+
+  security_rule {
+  name                       = "appgw-web-access"
+  priority                   = 110
+  direction                  = "Inbound"
+  access                     = "Allow"
+  protocol                   = "Tcp"
+  source_port_range          = "*"
+  source_address_prefix      = "Internet"
+  destination_port_ranges    = [80, 443]
+  destination_address_prefix = "*"
+  }
 }
 
 resource "azurerm_subnet_network_security_group_association" "db-association" {
