@@ -33,3 +33,33 @@ variable "db_port" {
   description = "DB port"
   default = 5432
 }
+
+variable "argocd_namespace" {
+  description = "Namespace where argocd will be installed"
+  type = string
+  default = "argocd"
+}
+
+variable "argocd_domainName" {
+  description = "Doamin name for argocd ui"
+  type = string
+  default = "argocd.cjaydevops.com"
+}
+
+variable "argocd_enable_ingress" {
+  description = "Whether to enable ingress for argocd or not"
+  type = bool
+  default = true
+}
+
+variable "argocd_enable_tls" {
+  description = "Whether to enable TLS termination at ingress for argocd or not"
+  type = bool
+  default = false
+}
+
+variable "ingress_class_name" {
+  description = "Name of the ingressClass"
+  type = string
+  default = "azure-application-gateway"
+}
