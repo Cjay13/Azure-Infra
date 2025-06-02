@@ -8,7 +8,7 @@ resource "azurerm_kubernetes_cluster" "user-management-aks" {
   default_node_pool {
     name       = "default"
     auto_scaling_enabled = true
-    node_count = 3
+    node_count = 2
     max_count = 5
     min_count = 2
     vm_size    = "Standard_D2ds_v5"
