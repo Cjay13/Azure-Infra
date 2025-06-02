@@ -35,15 +35,15 @@ resource "azurerm_kubernetes_cluster" "user-management-aks" {
 
 
 resource "azurerm_role_assignment" "agic_reader" {
-  scope                = data.azurerm_resource_group.user_management.id
+  scope                = data.azurerm_resource_group.user-management.id
   role_definition_name = "Reader"
-  principal_id         = azurerm_kubernetes_cluster.user_management_aks.identity[0].principal_id
+  principal_id         = azurerm_kubernetes_cluster.user-management-aks.identity[0].principal_id
 }
 
 resource "azurerm_role_assignment" "agic_contributor" {
-  scope                = azurerm_application_gateway.user_management_appgw.id
+  scope                = azurerm_application_gateway.user-management-appgw.id
   role_definition_name = "Contributor"
-  principal_id         = azurerm_kubernetes_cluster.user_management_aks.identity[0].principal_id
+  principal_id         = azurerm_kubernetes_cluster.user-management-aks.identity[0].principal_id
 }
 
 output "client_certificate" {
