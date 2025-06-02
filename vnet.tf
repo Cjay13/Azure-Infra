@@ -29,7 +29,16 @@ resource "azurerm_subnet" "appgw-subnet" {
   name = "appgw-subnet"
   resource_group_name = data.azurerm_resource_group.user-management.name
   virtual_network_name = azurerm_virtual_network.user-management.name
-  address_prefixes = [var.appgw_subnet_cidr_range]  
+  address_prefixes = [var.appgw_subnet_cidr_range]
+
+  delegation {
+    name = "appgw-delegation"
+
+    service_delegation {
+      name    = "Microsoft.Network/applicationGateways"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+    }
+  }  
 }
 
 locals {
