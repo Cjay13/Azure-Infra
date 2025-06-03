@@ -18,11 +18,11 @@ resource "azurerm_mysql_flexible_server" "user-management-mysql-server" {
   administrator_password = random_password.mysql_password.result
   backup_retention_days  = 7
   delegated_subnet_id    = azurerm_subnet.db-subnet.id
-  sku_name               = "GP_Standard_D2ds_v4"
+  sku_name               = "Standard_B1ms"
   version = 5.7
   public_network_access = "Disabled"
   high_availability {
-    mode = "Disabled"
+    mode = "SameZone"
   }
   storage {
     size_gb = 20
