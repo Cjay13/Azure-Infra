@@ -48,6 +48,18 @@ resource "azurerm_role_assignment" "agic_contributor" {
   principal_id         = azurerm_kubernetes_cluster.user-management-aks.identity[0].principal_id
 }
 
+resource "azurerm_user_assigned_identity" "aks-vault-user" {
+  location            = data.azurerm_resource_group.user-management.location
+  name                = "aks-vault-user"
+  resource_group_name = data.azurerm_resource_group.user-management.name
+}
+
+resource "azurerm_role_assignment" "aks-valut-user-role" {
+  scope                = data.azurerm_key_vault.cjaydevops-key-vault.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_user_assigned_identity.aks-valut-user.principal_id
+}
+
 output "client_certificate" {
   value     = azurerm_kubernetes_cluster.user-management-aks.kube_config[0].client_certificate
   sensitive = true
@@ -56,4 +68,12 @@ output "client_certificate" {
 output "kube_config" {
   value = azurerm_kubernetes_cluster.user-management-aks.kube_config_raw
   sensitive = true
+}
+
+output "aks-vault-user-principal_id" {
+  value = azurerm_user_assigned_identity.aks-valut-user.principal_id
+}
+
+output "aks-vault-user-client_id" {
+  value = azurerm_user_assigned_identity.aks-valut-user.client_id
 }
