@@ -57,7 +57,7 @@ resource "azurerm_user_assigned_identity" "aks-vault-user" {
 resource "azurerm_role_assignment" "aks-valut-user-role" {
   scope                = data.azurerm_key_vault.cjaydevops-key-vault.id
   role_definition_name = "Key Vault Secrets User"
-  principal_id         = azurerm_user_assigned_identity.aks-valut-user.principal_id
+  principal_id         = azurerm_user_assigned_identity.aks-vault-user.principal_id
 }
 
 output "client_certificate" {
@@ -71,9 +71,9 @@ output "kube_config" {
 }
 
 output "aks-vault-user-principal_id" {
-  value = azurerm_user_assigned_identity.aks-valut-user.principal_id
+  value = azurerm_user_assigned_identity.aks-vault-user.principal_id
 }
 
 output "aks-vault-user-client_id" {
-  value = azurerm_user_assigned_identity.aks-valut-user.client_id
+  value = azurerm_user_assigned_identity.aks-vault-user.client_id
 }
