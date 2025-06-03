@@ -26,6 +26,7 @@ resource "azurerm_mysql_flexible_server" "user-management-mysql-server" {
   administrator_password = random_password.mysql_password.result
   backup_retention_days  = 7
   delegated_subnet_id    = azurerm_subnet.db-subnet.id
+  private_dns_zone_id    = azurerm_private_dns_zone.db-pvt-dns-zone.id
   sku_name               = "B_Standard_B1ms"
   version = 5.7
   public_network_access = "Disabled"
@@ -33,6 +34,7 @@ resource "azurerm_mysql_flexible_server" "user-management-mysql-server" {
     size_gb = 20
   }
   
+  depends_on = [ azurerm_private_dns_zone.db-pvt-dns-zone ]
 }
 
 resource "azurerm_mysql_flexible_database" "user-management-mysql-db" {

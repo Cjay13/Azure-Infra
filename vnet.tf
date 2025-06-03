@@ -211,3 +211,28 @@ resource "azurerm_application_gateway" "user-management-appgw" {
   }
 }
 
+resource "azurerm_private_dns_zone" "db-pvt-dns-zone" {
+  name                = "privatelink.mysql.database.azure.com"
+  resource_group_name = data.azurerm_resource_group.user-management.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "db-pvt-link" {
+  name                  = "dbzonevnetlink"
+  private_dns_zone_name = azurerm_private_dns_zone.db-pvt-dns-zone.name
+  virtual_network_id    = azurerm_virtual_network.user-management.id
+  resource_group_name   = data.azurerm_resource_group.user-management.name
+}
+
+resource "azurerm_private_endpoint" "mysql_private_endpoint" {
+  name                = "mysql-private-endpoint"
+  location            = data.azurerm_resource_group.user-management.location
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  subnet_id           = azurerm_subnet.db-subnet.id
+
+  private_service_connection {
+    name                           = "mysql-psc"
+    private_connection_resource_id = azurerm_mysql_flexible_server.user-management-mysql-server.id
+    is_manual_connection           = false
+    subresource_names              = ["mysqlServer"]
+  }
+}
