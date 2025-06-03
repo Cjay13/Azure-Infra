@@ -18,7 +18,7 @@ resource "azurerm_mysql_flexible_server" "user-management-mysql-server" {
   administrator_password = random_password.mysql_password.result
   backup_retention_days  = 7
   delegated_subnet_id    = azurerm_subnet.db-subnet.id
-  sku_name               = "Standard_B1ms"
+  sku_name               = "B_Standard_B1ms"
   version = 5.7
   public_network_access = "Disabled"
   high_availability {
