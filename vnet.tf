@@ -70,7 +70,18 @@ resource "azurerm_network_security_group" "db-nsg" {
     source_address_prefix = local.aks_subnet_cidr
     destination_port_range = var.db_port
     destination_address_prefix = local.db_subnet_cidr
+  }
 
+  security_rule {
+    name = "db-access-vm"
+    priority = 110
+    direction = "Inbound"
+    access = "Allow"
+    protocol = "Tcp"
+    source_port_range = "*"
+    source_address_prefix = "20.92.224.205"
+    destination_port_range = var.db_port
+    destination_address_prefix = local.db_subnet_cidr
   } 
 }
 
