@@ -31,7 +31,7 @@ variable "appgw_subnet_cidr_range" {
 variable "db_port" {
   type = number
   description = "DB port"
-  default = 5432
+  default = 3306
 }
 
 variable "argocd_namespace" {
