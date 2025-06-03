@@ -23,6 +23,15 @@ resource "azurerm_subnet" "db-subnet" {
   resource_group_name = data.azurerm_resource_group.user-management.name
   virtual_network_name = azurerm_virtual_network.user-management.name
   address_prefixes = [var.db_subnet_cidr_range]
+
+  delegation {
+    name = "db-delegation"
+
+    service_delegation {
+      name    = "Microsoft.DBforPostgreSQL/flexibleServers"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+    }
+  }
 }
 
 resource "azurerm_subnet" "appgw-subnet" {
