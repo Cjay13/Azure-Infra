@@ -240,16 +240,16 @@ resource "azurerm_private_dns_zone_virtual_network_link" "db-pvt-link" {
   resource_group_name   = data.azurerm_resource_group.user-management.name
 }
 
-resource "azurerm_private_endpoint" "mysql_private_endpoint" {
-  name                = "mysql-private-endpoint"
-  location            = data.azurerm_resource_group.user-management.location
-  resource_group_name = data.azurerm_resource_group.user-management.name
-  subnet_id           = azurerm_subnet.pvtep-subnet.id
+# resource "azurerm_private_endpoint" "mysql_private_endpoint" {
+#   name                = "mysql-private-endpoint"
+#   location            = data.azurerm_resource_group.user-management.location
+#   resource_group_name = data.azurerm_resource_group.user-management.name
+#   subnet_id           = azurerm_subnet.pvtep-subnet.id
 
-  private_service_connection {
-    name                           = "mysql-psc"
-    private_connection_resource_id = azurerm_mysql_flexible_server.user-management-mysql-server.id
-    is_manual_connection           = false
-    subresource_names              = ["mysqlServer"]
-  }
-}
+#   private_service_connection {
+#     name                           = "mysql-psc"
+#     private_connection_resource_id = azurerm_mysql_flexible_server.user-management-mysql-server.id
+#     is_manual_connection           = false
+#     subresource_names              = ["mysqlServer"]
+#   }
+# }
