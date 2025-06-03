@@ -34,7 +34,7 @@ resource "azurerm_mysql_flexible_server" "user-management-mysql-server" {
     size_gb = 20
   }
   
-  depends_on = [ azurerm_private_dns_zone.db-pvt-dns-zone ]
+  depends_on = [ azurerm_private_dns_zone.db-pvt-dns-zone, azurerm_private_dns_zone_virtual_network_link.db-pvt-link ]
 }
 
 resource "azurerm_mysql_flexible_database" "user-management-mysql-db" {
