@@ -244,7 +244,7 @@ resource "azurerm_private_endpoint" "mysql_private_endpoint" {
   name                = "mysql-private-endpoint"
   location            = data.azurerm_resource_group.user-management.location
   resource_group_name = data.azurerm_resource_group.user-management.name
-  subnet_id           = azurerm_subnet.db-subnet.id
+  subnet_id           = azurerm_subnet.pvtep-subnet.id
 
   private_service_connection {
     name                           = "mysql-psc"
