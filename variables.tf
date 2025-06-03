@@ -28,6 +28,12 @@ variable "appgw_subnet_cidr_range" {
   default = "10.1.2.32/27"
 }
 
+variable "pvtep_subnet_cidr_range" {
+  type = string
+  description = "Address space of the private endpoint subnet"
+  default = "10.1.2.64/27"
+}
+
 variable "db_port" {
   type = number
   description = "DB port"

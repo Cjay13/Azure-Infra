@@ -50,6 +50,13 @@ resource "azurerm_subnet" "appgw-subnet" {
   }  
 }
 
+resource "azurerm_subnet" "pvtep-subnet" {
+  name = "pvtep-subnet"
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  virtual_network_name = azurerm_virtual_network.user-management.name
+  address_prefixes = [var.pvtep_subnet_cidr_range] 
+}
+
 locals {
   aks_subnet_cidr = azurerm_subnet.aks-subnet.address_prefixes[0]
   db_subnet_cidr = azurerm_subnet.db-subnet.address_prefixes[0]
@@ -71,18 +78,6 @@ resource "azurerm_network_security_group" "db-nsg" {
     destination_port_range = var.db_port
     destination_address_prefix = local.db_subnet_cidr
   }
-
-  security_rule {
-    name = "db-access-vm"
-    priority = 110
-    direction = "Inbound"
-    access = "Allow"
-    protocol = "Tcp"
-    source_port_range = "*"
-    source_address_prefix = "20.92.224.205"
-    destination_port_range = var.db_port
-    destination_address_prefix = local.db_subnet_cidr
-  } 
 }
 
 resource "azurerm_network_security_group" "aks-nsg" {
@@ -133,6 +128,23 @@ resource "azurerm_network_security_group" "appgw-nsg" {
   }
 }
 
+resource "azurerm_network_security_group" "pvtep-nsg" {
+  name                = "pvtep-nsg"
+  location            = data.azurerm_resource_group.user-management.location
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  security_rule {
+    name = "pvtep-access"
+    priority = 100
+    direction = "Inbound"
+    access = "Allow"
+    protocol = "Tcp"
+    source_port_range = "*"
+    source_address_prefix = local.aks_subnet_cidr
+    destination_port_range = var.db_port
+    destination_address_prefix = "*"
+  } 
+}
+
 resource "azurerm_subnet_network_security_group_association" "db-association" {
   subnet_id = azurerm_subnet.db-subnet.id
   network_security_group_id = azurerm_network_security_group.db-nsg.id
@@ -146,6 +158,11 @@ resource "azurerm_subnet_network_security_group_association" "aks-association" {
 resource "azurerm_subnet_network_security_group_association" "appgw-association" {
   subnet_id = azurerm_subnet.appgw-subnet.id
   network_security_group_id = azurerm_network_security_group.appgw-nsg.id
+}
+
+resource "azurerm_subnet_network_security_group_association" "pvtep-association" {
+  subnet_id = azurerm_subnet.pvtep-subnet.id
+  network_security_group_id = azurerm_network_security_group.pvtep-nsg.id
 }
 
 resource "azurerm_public_ip" "appgw-pip" {
