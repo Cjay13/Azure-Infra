@@ -2,6 +2,7 @@ resource "random_password" "mysql_password" {
   length  = 16
   special = true
   override_special = "!@#"
+  number           = true
 }
 
 resource "azurerm_key_vault_secret" "mysql_password_secret" {
