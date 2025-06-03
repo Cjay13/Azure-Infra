@@ -19,6 +19,8 @@ resource "azurerm_kubernetes_cluster" "user-management-aks" {
     type = "SystemAssigned"
   }
 
+  oidc_issuer_enabled = true
+
   tags = {
     project = "user-management"
   }
