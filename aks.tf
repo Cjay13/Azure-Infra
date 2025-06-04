@@ -20,6 +20,7 @@ resource "azurerm_kubernetes_cluster" "user-management-aks" {
   }
 
   oidc_issuer_enabled = true
+  workload_identity_enabled = true
 
   tags = {
     project = "user-management"
