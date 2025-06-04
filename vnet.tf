@@ -205,7 +205,7 @@ resource "azurerm_nat_gateway_public_ip_association" "user-management-natgw-ipas
 
 resource "azurerm_subnet_nat_gateway_association" "user-management-natgw-snassociation" {
   subnet_id      = azurerm_subnet.aks-subnet.id
-  nat_gateway_id = azurerm_public_ip.natgw-pip.id
+  nat_gateway_id = azurerm_nat_gateway.user-management-natgw.id
 }
 
 resource "azurerm_application_gateway" "user-management-appgw" {
