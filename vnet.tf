@@ -184,6 +184,30 @@ resource "azurerm_public_ip" "appgw-pip" {
   allocation_method   = "Static"
 }
 
+resource "azurerm_public_ip" "natgw-pip" {
+  name                = "natgw-pip"
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  location            = data.azurerm_resource_group.user-management.location
+  allocation_method   = "Static"
+}
+
+resource "azurerm_nat_gateway" "user-management-natgw" {
+  name                = "user-management-natgw"
+  location            = data.azurerm_resource_group.user-management.location
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  sku_name            = "Standard"
+}
+
+resource "azurerm_nat_gateway_public_ip_association" "user-management-natgw-ipassociation" {
+  nat_gateway_id       = azurerm_nat_gateway.user-management-natgw.id
+  public_ip_address_id = azurerm_public_ip.natgw-pip.id
+}
+
+resource "azurerm_subnet_nat_gateway_association" "user-management-natgw-snassociation" {
+  subnet_id      = azurerm_subnet.aks-subnet.id
+  nat_gateway_id = azurerm_public_ip.natgw-pip.id
+}
+
 resource "azurerm_application_gateway" "user-management-appgw" {
   name                = "user-management-appgw"
   resource_group_name = data.azurerm_resource_group.user-management.name
