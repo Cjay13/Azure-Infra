@@ -104,7 +104,7 @@ resource "azurerm_network_security_group" "aks-nsg" {
     protocol = "Tcp"
     source_port_range = "*"
     source_address_prefix = "*"
-    destination_port_ranges = [80, 443]
+    destination_port_ranges = [80, 443, 8080]
     destination_address_prefix = local.aks_subnet_cidr
 
   } 
