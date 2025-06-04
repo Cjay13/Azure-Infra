@@ -60,6 +60,15 @@ resource "azurerm_role_assignment" "aks-valut-user-role" {
   principal_id         = azurerm_user_assigned_identity.aks-vault-user.principal_id
 }
 
+resource "azurerm_federated_identity_credential" "oidc-binding" {
+  name                = "oidc-binding"
+  resource_group_name = data.azurerm_resource_group.user-management.name
+  audience            = ["api://AzureADTokenExchange"]
+  issuer              = azurerm_kubernetes_cluster.user-management-aks.oidc_issuer_url
+  parent_id           = azurerm_user_assigned_identity.aks-vault-user.id
+  subject             = "system:serviceaccount:${var.namespace}:${var.serviceaccount-name}"
+}
+
 output "client_certificate" {
   value     = azurerm_kubernetes_cluster.user-management-aks.kube_config[0].client_certificate
   sensitive = true

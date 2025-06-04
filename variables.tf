@@ -69,3 +69,15 @@ variable "ingress_class_name" {
   type = string
   default = "azure-application-gateway"
 }
+
+variable "namespace" {
+  description = "Namespace for the application deployment"
+  type = string
+  default = "user-management"
+}
+
+variable "serviceaccount-name" {
+  description = "Name of the SA"
+  type = string
+  default = "user-management-sa"
+}
